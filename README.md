@@ -3,7 +3,6 @@
 A modern, interactive, and responsive BMI Calculator designed to help users easily calculate their Body Mass Index based on their weight and height. The application provides a visual meter, color-coded results, and helpful character illustrations to make the experience engaging and easy to understand.
 
 ## 🚀 Live Demo
-*(Add your Netlify link here once you deploy the latest version)*
 https://body-mass-index-checker.netlify.app/
 
 ## ✨ Features
