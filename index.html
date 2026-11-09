@@ -3,121 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMI Calculator</title>
+    <title>BMI Calculator | Body Mass Index</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: black;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --underweight: #3b82f6;
+            --normal: #10b981;
+            --overweight: #f59e0b;
+            --obese: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
             text-align: center;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
         }
 
         h1 {
-            margin-bottom: 20px;
-            color: blue;
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--text-main);
+        }
+
+        #bmiForm {
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: left;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #28a745;
-            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
         }
 
         input {
-            width: calc(100% - 20px);
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            text-align: center;
-            color: blueviolet;
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         button {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 14px;
             border: none;
-            background-color: #28a745;
+            background-color: var(--primary);
             color: white;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
 
         button:hover {
-            background-color: #218838;
+            background-color: var(--primary-hover);
         }
 
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-            color: blue;
+        button:active {
+            transform: scale(0.98);
         }
 
-        img {
+        .result-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .result-container.active {
             display: block;
-            margin: 0 auto;
+            opacity: 1;
+            transform: translateY(0);
         }
+
+        .result-title {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .bmi-value {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .meter-container {
+            margin: 20px 0 30px;
+            position: relative;
+        }
+
+        .meter-bar {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, 
+                var(--underweight) 0%, var(--underweight) 18.5%, 
+                var(--normal) 18.5%, var(--normal) 25%, 
+                var(--overweight) 25%, var(--overweight) 30%, 
+                var(--obese) 30%, var(--obese) 100%
+            );
+            position: relative;
+            width: 100%;
+        }
+
+        .meter-pointer {
+            position: absolute;
+            top: -8px;
+            width: 4px;
+            height: 28px;
+            background-color: white;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            left: 0%;
+            transition: left 1s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translateX(-50%);
+        }
+
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .category-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .character-img {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .reset-btn {
+            background-color: #334155;
+            color: var(--text-main);
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background-color: #475569;
+        }
+
+        .color-underweight { color: var(--underweight); }
+        .color-normal { color: var(--normal); }
+        .color-overweight { color: var(--overweight); }
+        .color-obese { color: var(--obese); }
+        .category-label {color: var(--text-main);}
     </style>
 </head>
-
 <body>
+
     <div class="container">
-        <h1>BMI Calculator (Body Mass Index)</h1>
+        <h1 id="mainTitle">BMI Calculator</h1>
+        
         <form id="bmiForm">
             <div class="form-group">
-                <label for="weight">Weight (kg):</label>
-                <input type="number" id="weight" name="weight" step="0.01" required>
+                <label for="weight">Weight (kg)</label>
+                <input type="text" inputmode="decimal" id="weight" placeholder="e.g., 70" required>
             </div>
             <div class="form-group">
-                <label for="height">Height (cm):</label>
-                <input type="number" id="height" name="height" step="0.01" required>
+                <label for="height">Height (cm)</label>
+                <input type="text" inputmode="decimal" id="height" placeholder="e.g., 175" required>
             </div>
             <button type="submit">Calculate BMI</button>
         </form>
-        <div id="result" class="result"></div>
-        <div id="image" class="image"></div>
+
+        <div id="resultContainer" class="result-container">
+            <div class="result-title">Your BMI is</div>
+            <div id="bmiValue" class="bmi-value"></div>
+            
+            <div class="meter-container">
+                <div class="meter-bar">
+                    <div id="meterPointer" class="meter-pointer"></div>
+                </div>
+                <div class="meter-labels">
+                    <span>Under</span>
+                    <span>Normal</span>
+                    <span>Over</span>
+                    <span>Obese</span>
+                </div>
+            </div>
+
+            <div id="categoryText" class="category-text"></div>
+            <img id="resultImage" class="character-img" src="" alt="BMI Category">
+            
+            <button class="reset-btn" onclick="resetCalculator()">Calculate Again</button>
+        </div>
     </div>
+
     <script>
-        document.getElementById('bmiForm').addEventListener('submit', function (event) {
+        const form = document.getElementById('bmiForm');
+        const weightInput = document.getElementById('weight');
+        const heightInput = document.getElementById('height');
+        const resultContainer = document.getElementById('resultContainer');
+        const mainTitle = document.getElementById('mainTitle');
+        
+        const bmiValueDisplay = document.getElementById('bmiValue');
+        const categoryTextDisplay = document.getElementById('categoryText');
+        const resultImage = document.getElementById('resultImage');
+        const meterPointer = document.getElementById('meterPointer');
+
+        function enforceNumberOnly(inputElement, maxLimit) {
+            inputElement.addEventListener('input', function (e) {
+                let value = e.target.value;
+                value = value.replace(/[^0-9.]/g, '');
+                const dotCount = (value.match(/\./g) || []).length;
+                if (dotCount > 1) {
+                    const parts = value.split('.');
+                    value = parts[0] + '.' + parts.slice(1).join('');
+                }
+                if (parseFloat(value) > maxLimit) {
+                    value = maxLimit.toString();
+                }
+                e.target.value = value;
+            });
+
+            inputElement.addEventListener('keypress', function (e) {
+                if (!/[0-9.]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        enforceNumberOnly(heightInput, 300);
+        enforceNumberOnly(weightInput, 600);
+
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
-            const weight = parseFloat(document.getElementById('weight').value);
-            const height = parseFloat(document.getElementById('height').value) / 100;
 
-            if (weight <= 0 || height <= 0) {
-                alert("Please enter valid weight and height values.");
+            const weight = parseFloat(weightInput.value);
+            const heightCm = parseFloat(heightInput.value);
+
+            if (isNaN(weight) || isNaN(heightCm) || weight <= 0 || heightCm <= 0) {
+                alert("Please enter valid positive numbers.");
+                return;
             }
 
-            const bmi = (weight / (height * height)).toFixed(2);
-            const resultDiv = document.getElementById('result');
-            const imageDiv = document.getElementById('image');
+            const heightM = heightCm / 100; 
+            const bmi = parseFloat((weight / (heightM * heightM)).toFixed(1));
 
-            imageDiv.innerHTML = "";
+            let category = "";
+            let colorClass = "";
+            let imagePath = "";
+            let pointerPercentage = 0;
+
             if (bmi < 18.5) {
-                resultDiv.innerHTML = `Your BMI is ${bmi} and you are underweight. <img src="underweight.png" alt="Underweight" style="max-width: 30%; height: auto;">`;
+                category = "Underweight";
+                colorClass = "color-underweight";
+                imagePath = "underweight.png";
+                pointerPercentage = Math.max(0, ((bmi - 10) / 8.5) * 18); 
             } else if (bmi >= 18.5 && bmi <= 24.9) {
-                resultDiv.innerHTML = `Your BMI is ${bmi} and you have a normal weight. <img src="normal.png" alt="Normal Weight" style="max-width: 30%; height: auto;">`;
+                category = "Normal Weight";
+                colorClass = "color-normal";
+                imagePath = "normal.png";
+                pointerPercentage = 18 + (((bmi - 18.5) / 6.4) * 22);
             } else if (bmi >= 25 && bmi <= 29.9) {
-                resultDiv.innerHTML = `Your BMI is ${bmi} and you are overweight. <img src="overweight.png" alt="Overweight" style="max-width: 30%; height: auto;">`;
+                category = "Overweight";
+                colorClass = "color-overweight";
+                imagePath = "overweight.png";
+                pointerPercentage = 40 + (((bmi - 25) / 4.9) * 20);
             } else {
-                resultDiv.innerHTML = `Your BMI is ${bmi} and you are obese. <img src="obese.png" alt="Obese" style="max-width: 30%; height: auto;">`;
+                category = "Obese";
+                colorClass = "color-obese";
+                imagePath = "obese.png";
+                pointerPercentage = Math.min(100, 60 + (((bmi - 30) / 20) * 40));
             }
+
+            bmiValueDisplay.textContent = bmi;
+            bmiValueDisplay.className = `bmi-value ${colorClass}`;
+            
+            categoryTextDisplay.innerHTML = `<span class="category-label">Category:</span> ${category}`;
+            categoryTextDisplay.className = `category-text ${colorClass}`;
+            
+            resultImage.src = imagePath;
+            resultImage.alt = category;
+
+            form.style.display = 'none';
+            mainTitle.style.display = 'none';
+            resultContainer.classList.add('active');
+
+            setTimeout(() => {
+                meterPointer.style.left = `${pointerPercentage}%`;
+            }, 100);
         });
+
+        function resetCalculator() {
+            resultContainer.classList.remove('active');
+            
+            setTimeout(() => {
+                form.style.display = 'block';
+                mainTitle.style.display = 'block';
+                meterPointer.style.left = '0%';
+            }, 300); 
+        }
     </script>
 </body>
 </html>
