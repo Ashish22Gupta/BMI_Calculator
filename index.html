@@ -306,22 +306,22 @@
             if (bmi < 18.5) {
                 category = "Underweight";
                 colorClass = "color-underweight";
-                imagePath = "underweight.png";
+                imagePath = "underweight.webp";
                 pointerPercentage = Math.max(0, ((bmi - 10) / 8.5) * 18); 
             } else if (bmi >= 18.5 && bmi <= 24.9) {
                 category = "Normal Weight";
                 colorClass = "color-normal";
-                imagePath = "normal.png";
+                imagePath = "normal.webp";
                 pointerPercentage = 18 + (((bmi - 18.5) / 6.4) * 22);
             } else if (bmi >= 25 && bmi <= 29.9) {
                 category = "Overweight";
                 colorClass = "color-overweight";
-                imagePath = "overweight.png";
+                imagePath = "overweight.webp";
                 pointerPercentage = 40 + (((bmi - 25) / 4.9) * 20);
             } else {
                 category = "Obese";
                 colorClass = "color-obese";
-                imagePath = "obese.png";
+                imagePath = "obese.webp";
                 pointerPercentage = Math.min(100, 60 + (((bmi - 30) / 20) * 40));
             }
 
