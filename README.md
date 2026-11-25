@@ -6,7 +6,6 @@
 A modern, dark-themed BMI calculator that takes weight and height inputs, computes Body Mass Index, and displays the result on an animated color-coded meter. It features strict numeric input validation, category-based color theming, illustrative result images, and smooth form-to-result transitions — all in a single self-contained HTML file.
 
 ![Version](https://img.shields.io/badge/Version-1.0.0-4361ee)
-![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Portfolio%20Project-F4B400)
 ![Responsive](https://img.shields.io/badge/Responsive-Desktop%20%26%20Mobile-2D6A4F)
 
